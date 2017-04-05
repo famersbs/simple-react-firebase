@@ -1,7 +1,7 @@
 import firebase from "firebase"
 
 /*
- *  It generate a group of the functions for using firebase 
+ *  It generate a group of the functions for using firebase
  */
 export function getFBFunctions(component){
 
@@ -16,7 +16,7 @@ export function getFBFunctions(component){
         if( null != authUnsubscribe ){
             authUnsubscribe()
             authUnsubscribe = null
-        }  
+        }
     }
 
     const releaseDbListener = (path) => {
@@ -35,7 +35,7 @@ export function getFBFunctions(component){
         })
     }
 
-    
+
     // Auth on
     fb.AuthOn = ( attachedStateName, modifyFunc = (v) => v  ) => {
         releaseAuthListener()
@@ -64,14 +64,16 @@ export function getFBFunctions(component){
         return releaseAuthListener()
     }
 
-    // DatabaseOnce 
-    fb.DatabaseOnce = (path, attachedStateName, modifyFunc = (v) => v ) => {
+    // DatabaseOnce
+    fb.DatabaseOnce = (path, attachedStateName = null, modifyFunc = (v) => v ) => {
         return database.ref(path).once("value")
         .then( (snapshot) => {
+          if(null != attachedStateName){
             var snap = {}
             snap[attachedStateName] = modifyFunc(snapshot.val())
             component.setState(snap)
-            return snapshot
+          }
+          return snapshot
         })
     }
 
@@ -88,7 +90,7 @@ export function getFBFunctions(component){
                     component.setState(snap)
                 }
         }
-        
+
         return database.ref(path).on(dblisteners[path].type, dblisteners[path].cb)
     }
 
@@ -117,4 +119,3 @@ export function getFBFunctions(component){
     return fb
 
 }
-
