@@ -66,8 +66,8 @@ export default class Login extends React.Component {
   }
   componentWillMount(){
     this.props.fb.AuthOn("user", (v) => ({ ...v, modified_email: v.email }) )
-    this.props.fb.DatabaseOn("/v2/privilege", "privilege", (v) => ( Object.keys(v).map( e => e ) ) )
-    this.props.fb.DatabaseOn("/test", "test")
+    this.props.fb.DatabaseOn("/v2/privilege",{/*aggregate query*/}, "privilege", (v) => ( Object.keys(v).map( e => e ) ) )
+    this.props.fb.DatabaseOn("/test",{/*aggregate query*/}, "test")
     this.props.fb.DatabaseOnce("/test","tt")
     .then(value => {
       console.log("Once ", value.val())

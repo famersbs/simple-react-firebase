@@ -1,5 +1,7 @@
 import firebase from "firebase"
 
+import Aggregater from "./aggregater"
+
 /*
  *  It generate a group of the functions for using firebase
  */
@@ -21,7 +23,8 @@ export function getFBFunctions(component){
 
     const releaseDbListener = (path) => {
         if( null != dblisteners[path] ){
-            database.ref(path).off(dblisteners[path].type, dblisteners[path].cb)
+            //database.ref(path).off(dblisteners[path].type, dblisteners[path].cb)
+            dblisteners[path].off()
             dblisteners[path] = null
             delete dblisteners[path]
         }
@@ -31,7 +34,7 @@ export function getFBFunctions(component){
     fb.ReleaseAll = () => {
         releaseAuthListener()
         Object.keys(dblisteners).forEach(e => {
-            releaseAuthListener(e)
+            releaseDbListener(e)
         })
     }
 
@@ -79,9 +82,21 @@ export function getFBFunctions(component){
 
     // Database on
     // @return promise
-    fb.DatabaseOn = ( path, attachedStateName, modifyFunc = (v) => v ) => {
+    fb.DatabaseOn = ( path, query, attachedStateName, modifyFunc = (v) => v ) => {
         releaseDbListener(path)
+        var req = Aggregater(path, query)
 
+        req.setListener( val => {
+            var snap = {}
+            snap[attachedStateName] = modifyFunc(val)
+            component.setState(snap)
+        })
+
+        dblisteners[path] = req
+
+        return req.on()
+
+        /* 
         dblisteners[path] = {
             type: "value",
             cb : (snapshot) => {
@@ -92,6 +107,7 @@ export function getFBFunctions(component){
         }
 
         return database.ref(path).on(dblisteners[path].type, dblisteners[path].cb)
+        */
     }
 
     // Database off
