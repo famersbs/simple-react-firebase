@@ -2,14 +2,27 @@ import firebase from "firebase"
 
 import Aggregater from "./aggregater"
 
+export var defaultFBObject = {
+    firebase: firebase,
+    // Sign In
+    // @return promise
+    SignInWithEmailAndPassword: (email, password) => {
+        return firebase.auth().signInWithEmailAndPassword(email, password)
+    },
+
+    // Sign Out
+    // @return promise
+    SignOut: () => {
+        return firebase.auth().signOut()
+    }
+}
+
 /*
  *  It generate a group of the functions for using firebase
  */
 export function getFBFunctions(component){
 
-    var fb = {
-        firebase: firebase
-    }
+    var fb = {...defaultFBObject}
     var authUnsubscribe = null
     var dblisteners = {}
     var database = firebase.database();
@@ -23,7 +36,6 @@ export function getFBFunctions(component){
 
     const releaseDbListener = (path) => {
         if( null != dblisteners[path] ){
-            //database.ref(path).off(dblisteners[path].type, dblisteners[path].cb)
             dblisteners[path].off()
             dblisteners[path] = null
             delete dblisteners[path]
@@ -47,18 +59,6 @@ export function getFBFunctions(component){
             value[attachedStateName] = modifyFunc(user)
             component.setState(value)
         })
-    }
-
-    // Sign In
-    // @return promise
-    fb.SignInWithEmailAndPassword = (email, password) => {
-        return firebase.auth().signInWithEmailAndPassword(email, password)
-    }
-
-    // Sign Out
-    // @return promise
-    fb.SignOut = () => {
-        return firebase.auth().signOut()
     }
 
     // Auth off
@@ -95,19 +95,6 @@ export function getFBFunctions(component){
         dblisteners[path] = req
 
         return req.on()
-
-        /* 
-        dblisteners[path] = {
-            type: "value",
-            cb : (snapshot) => {
-                    var snap = {}
-                    snap[attachedStateName] = modifyFunc(snapshot.val())
-                    component.setState(snap)
-                }
-        }
-
-        return database.ref(path).on(dblisteners[path].type, dblisteners[path].cb)
-        */
     }
 
     // Database off
