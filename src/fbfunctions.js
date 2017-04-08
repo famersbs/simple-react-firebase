@@ -2,8 +2,11 @@ import firebase from "firebase"
 
 import Aggregater from "./aggregater"
 
+var database = null
+
 export var defaultFBObject = {
     firebase: firebase,
+
     // Sign In
     // @return promise
     SignInWithEmailAndPassword: (email, password) => {
@@ -14,18 +17,48 @@ export var defaultFBObject = {
     // @return promise
     SignOut: () => {
         return firebase.auth().signOut()
-    }
+    },
+
+    // Sign Up 
+    // @return promise
+    SignUp: (email, password, informations) => {
+        return firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then( result => {
+
+        })
+    },
+    
+    // Database Push
+    // @return promise
+    DatabasePush: (path, value) => {
+        return database.ref(path).push(value)
+    },
+
+    // Database Set
+    // @return promise
+    DatabaseSet: (path, value) => {
+        return database.ref(path).set(value)
+    },
+
+    // Database Remove
+    // @return promise
+    DatabaseRemove: (path) => {
+        return database.ref(path).remove()
+    },
 }
 
 /*
  *  It generate a group of the functions for using firebase
  */
 export function getFBFunctions(component){
+    
+    if(null == database){
+        database = firebase.database()
+    }
 
     var fb = {...defaultFBObject}
     var authUnsubscribe = null
     var dblisteners = {}
-    var database = firebase.database();
 
     const releaseAuthListener = () =>{
         if( null != authUnsubscribe ){
@@ -101,22 +134,6 @@ export function getFBFunctions(component){
     // @return promise
     fb.DatabaseOff = ( path ) => {
         return releaseDbListener(path)
-    }
-
-    // Database Push
-    // @return promise
-    fb.DatabasePush = (path, value) => {
-        return database.ref(path).push(value)
-    }
-    // Database Set
-    // @return promise
-    fb.DatabaseSet = (path, value) => {
-        return database.ref(path).set(value)
-    }
-    // Database Remove
-    // @return promise
-    fb.DatabaseRemove = (path) => {
-        return database.ref(path).remove()
     }
 
     return fb
