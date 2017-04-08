@@ -49,7 +49,7 @@ export default function aggregater(baseUrl, query = {}){
         })
 
         if( null != listener ){
-            listener( values )
+            listener( {...values} )
         }
     }
     retObject.setListener = cb => {
