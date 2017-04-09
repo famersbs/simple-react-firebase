@@ -1,6 +1,6 @@
 {
   "name": "simple-react-firebase",
-  "version": "0.0.9",
+  "version": "0.1.1",
   "description": "The simple way to use firebase with react",
   "main": "./lib/index.js",
   "scripts": {

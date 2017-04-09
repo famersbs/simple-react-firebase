@@ -21,13 +21,10 @@ export var defaultFBObject = {
 
     // Sign Up 
     // @return promise
-    SignUp: (email, password, informations) => {
+    SignUp: (email, password) => {
         return firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then( result => {
-
-        })
     },
-    
+
     // Database Push
     // @return promise
     DatabasePush: (path, value) => {

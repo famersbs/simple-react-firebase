@@ -24,6 +24,11 @@ export default function aggregater(baseUrl, query = {}){
 
     const mainFunc = snap => {
         values = snap.val()
+        
+        if( null == values ){
+            values = {}
+        }
+
         if(null != lookup){
 
             // turn off all old lookups
