@@ -56,6 +56,7 @@ export function getFBFunctions(component){
     var fb = {...defaultFBObject}
     var authUnsubscribe = null
     var dblisteners = {}
+    var isAuthChecked = false
 
     const releaseAuthListener = () =>{
         if( null != authUnsubscribe ){
@@ -80,14 +81,20 @@ export function getFBFunctions(component){
         })
     }
 
+    // this Function return current Checked Auth or not
+    fb.isAuthChecked = () => {
+        return isAuthChecked
+    }
 
     // Auth on
-    fb.AuthOn = ( attachedStateName, modifyFunc = (v) => v  ) => {
+    fb.AuthOn = ( attachedStateName, modifyFunc = (v) => v ) => {
         releaseAuthListener()
         authUnsubscribe = firebase.auth().onAuthStateChanged( (user) => {
             let value = {}
+            isAuthChecked = true
             value[attachedStateName] = modifyFunc(user)
             component.setState(value)
+            
         })
     }
 
