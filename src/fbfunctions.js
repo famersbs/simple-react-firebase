@@ -13,6 +13,12 @@ export var defaultFBObject = {
         return firebase.auth().signInWithEmailAndPassword(email, password)
     },
 
+    // Sign In
+    // @return promise
+    SignInWithCustomToken: (token) => {
+        return firebase.auth().signInWithCustomToken(token)
+    },
+
     // Sign Out
     // @return promise
     SignOut: () => {
